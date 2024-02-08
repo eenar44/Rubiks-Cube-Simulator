@@ -1,10 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Threading;
-using Unity.PlasticSCM.Editor.WebApi;
 using UnityEngine;
 
 public class BeginnersSolve : BaseSolver
@@ -327,11 +323,17 @@ public class BeginnersSolve : BaseSolver
 
                     while (WhiteCornerCubets(layerName) != null)
                     {
+                        Debug.Log("in loop");
                         yield return new WaitForSeconds(2.0f);
 
-                        string frontFace = WhiteCornerCubets(layerName);
-                        int frontLayerIndex = cubeStatesScript.FaceIndexTrans[frontFace];
+                        int frontLayerIndex = -1;
 
+                        if (WhiteCornerCubets(layerName) == null) { break; }
+                        else
+                        {
+                            string frontFace = WhiteCornerCubets(layerName);
+                            frontLayerIndex = cubeStatesScript.FaceIndexTrans[frontFace];
+                        }
                         Debug.Log("APPLYINGGG: ");
 
                         yield return new WaitForSeconds(1.0f);
@@ -339,6 +341,9 @@ public class BeginnersSolve : BaseSolver
                         ApplyRotation(changedWhiteFrontFace[frontLayerIndex]["Down"], false);
                         ApplyRotation(changedWhiteFrontFace[frontLayerIndex]["Right"], true);
                         yield return new WaitForSeconds(2.0f);
+
+                        
+
                     }
                 }
             }
@@ -359,14 +364,13 @@ public class BeginnersSolve : BaseSolver
             {
                 // only if its on the right side of the face
                 if (layerName == "Front" && Maths.AbsoluteValue(cubetPos.x, 1.025f)  > vecThreshold) { frontFace = "Front"; Debug.Log("FRONTING"); }
-                if (layerName == "Left"  && Maths.AbsoluteValue(cubetPos.z, -1.025f) > vecThreshold) { frontFace = "Left";  Debug.Log("LEFTING"); }
-                if (layerName == "Right" && Maths.AbsoluteValue(cubetPos.z, 1.025f)  > vecThreshold) { frontFace = "Right"; Debug.Log("RIGHTING"); }
+                if (layerName == "Left"  && Maths.AbsoluteValue(cubetPos.z, 1.025f) > vecThreshold) { frontFace = "Left";  Debug.Log("LEFTING"); }
+                if (layerName == "Right" && Maths.AbsoluteValue(cubetPos.z, -1.025f)  > vecThreshold) { frontFace = "Right"; Debug.Log("RIGHTING"); }
                 if (layerName == "Back"  && Maths.AbsoluteValue(cubetPos.x, -1.025f) > vecThreshold) { frontFace = "Back";  Debug.Log("BACKING"); }
 
-                Debug.Log(cubetName + " vec: " + cubetPos.y);
+                Debug.Log(cubetName + " vec: " + cubetPos.y + " frontFace: " + frontFace);
             }
         }
-        Debug.Log("Top layer right white corners count in " + layerName + " face");
         return frontFace;
     }
 
