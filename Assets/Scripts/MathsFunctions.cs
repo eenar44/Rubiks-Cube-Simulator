@@ -16,7 +16,7 @@ public class MathsFunctions : MonoBehaviour
     public float ConvertVectorToAngle(Vector2 vector)
     {
         float angleRadians = Mathf.Atan2(vector.y, vector.x);
-        float angleDegrees = angleRadians * Mathf.Rad2Deg;
+        float angleDegrees = angleRadians * RadiansToDegrees();
 
         if (angleDegrees < 0)
         {
@@ -24,5 +24,10 @@ public class MathsFunctions : MonoBehaviour
         }
 
         return angleDegrees;
+    }
+
+    public float RadiansToDegrees()
+    {
+        return 180f / Mathf.PI;
     }
 }

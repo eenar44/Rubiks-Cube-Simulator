@@ -18,6 +18,7 @@ public class GraphPlotter : MonoBehaviour
 
         graphPanel = transform.Find("graphPanel").GetComponent<RectTransform>();
         DrawGraph(dataManagerScript.GetNumberOfMoves());
+        //DrawGraph(new List<int> { 50, 25, 100, 200, 50, 250 });
     }
 
     private GameObject CreateCircle(Vector2 newPos)
