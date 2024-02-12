@@ -11,7 +11,7 @@ public class CubeStates : MonoBehaviour
 
     public MathsFunctions Maths;
 
-    public (Color color, Vector3 position)[,] cubePanels = new (Color, Vector3)[6, 9]; // uses a tuple
+    public Color[,] cubePanels = new Color[6, 9]; // array of colors
     public Color[,] solvedColourState = new Color[6, 9];
     public Camera[] orthoCameras = new Camera[6]; // ReadPanel
 
@@ -135,12 +135,12 @@ public class CubeStates : MonoBehaviour
         InitialiseColourDict();
         ReadPanel();
 
-        // makes a dupliate to compare with (un)solved state
+        // makes a duplicate to compare with (un)solved state
         for (int faceI = 0; faceI < 6; faceI++)
         {
             for (int panelI = 0; panelI < 9; panelI++)
             {
-                solvedColourState[faceI, panelI] = cubePanels[faceI, panelI].color;
+                solvedColourState[faceI, panelI] = cubePanels[faceI, panelI];
             }
         }
     }
@@ -152,32 +152,27 @@ public class CubeStates : MonoBehaviour
 
     public void ReadPanel()
     {
-        /* Reads the colour of each panel on the 3D Rubiks cube and write its to an array in CubeStates which stores the colours of each panel.*/
-        for (int camIndex = 0; camIndex < orthoCameras.Length; camIndex++) //looping through all 6 cameras (per face)
+        for (int camIndex = 0; camIndex < orthoCameras.Length; camIndex++)
         {
             Camera currentCamera = orthoCameras[camIndex];
-            List<Vector3> currentFaceVectors = RayVectors[camIndex]; // gets the vectors corresponding to that face and camera
+            List<Vector3> currentFaceVectors = RayVectors[camIndex];
 
-            for (int vectorIndex = 0; vectorIndex < currentFaceVectors.Count; vectorIndex++) // for every vector in currentFaceVector
+            for (int vectorIndex = 0; vectorIndex < currentFaceVectors.Count; vectorIndex++)
             {
-                Vector3 localPos = currentFaceVectors[vectorIndex]; //assigns the first vector to localPos
+                Vector3 localPos = currentFaceVectors[vectorIndex];
                 Vector3 camRayPos = currentCamera.transform.TransformPoint(localPos);
                 Vector3 rayDirection = camRayPos - currentCamera.transform.position;
 
                 if (Physics.Raycast(currentCamera.transform.position, rayDirection, out var hit))
                 {
-                    if (hit.transform.CompareTag("RubiksCubePanel")) // checks if the what the rays hits, is a panel on the face and not another object
+                    if (hit.transform.CompareTag("RubiksCubePanel"))
                     {
-                        Color panelColour = hit.transform.GetComponent<Renderer>().material.color; // gets the colour and updates the list in CubeStates
-                        Vector3 panelVec = hit.transform.position;
-                        // calculates the index in the cubePanels array (in CubeStates) and updates the color
-
+                        Color panelColour = hit.transform.GetComponent<Renderer>().material.color;
                         int faceIndex = camIndex;
-                        cubePanels[faceIndex, vectorIndex] = (panelColour, panelVec);
-                        //Debug.Log($"Updated cubePanels[{faceIndex}, {vectorIndex}] with color {panelColour} and vector {panelVec}.");//
+                        cubePanels[faceIndex, vectorIndex] = panelColour;
                     }
                 }
-                Debug.DrawRay(currentCamera.transform.position, rayDirection, Color.red); // shows the ray
+                Debug.DrawRay(currentCamera.transform.position, rayDirection, Color.red);
             }
         }
     }
@@ -204,7 +199,7 @@ public class CubeStates : MonoBehaviour
         {
             for (int panelIndex = 0; panelIndex < 9; panelIndex++)
             {
-                Color currentPanelColour = cubePanels[faceIndex, panelIndex].color;
+                Color currentPanelColour = cubePanels[faceIndex, panelIndex];
                 currentState[panelCounter] = GetColour(currentPanelColour);
                 panelCounter++;
             }
@@ -221,42 +216,42 @@ public class CubeStates : MonoBehaviour
             case "Up": // Yellow
                 for (int panelIndex = 0; panelIndex <= 8; panelIndex++)
                 {
-                    Color currentPanelColour = cubePanels[FaceIndexTrans["Up"], panelIndex].color;
+                    Color currentPanelColour = cubePanels[FaceIndexTrans["Up"], panelIndex];
                     currentState[panelIndex] = GetColour(currentPanelColour);
                 }
                 break;
             case "Front": // Green
                 for (int panelIndex = 0; panelIndex < 9; panelIndex++)
                 {
-                    Color currentPanelColour = cubePanels[FaceIndexTrans["Front"], panelIndex].color;
+                    Color currentPanelColour = cubePanels[FaceIndexTrans["Front"], panelIndex];
                     currentState[panelIndex] = GetColour(currentPanelColour);
                 }
                 break;
             case "Left": // Red
                 for (int panelIndex = 0; panelIndex < 9; panelIndex++)
                 {
-                    Color currentPanelColour = cubePanels[FaceIndexTrans["Left"], panelIndex].color;
+                    Color currentPanelColour = cubePanels[FaceIndexTrans["Left"], panelIndex];
                     currentState[panelIndex] = GetColour(currentPanelColour);
                 }
                 break;
             case "Right": // Orange
                 for (int panelIndex = 0; panelIndex < 9; panelIndex++)
                 {
-                    Color currentPanelColour = cubePanels[FaceIndexTrans["Right"], panelIndex].color;
+                    Color currentPanelColour = cubePanels[FaceIndexTrans["Right"], panelIndex];
                     currentState[panelIndex] = GetColour(currentPanelColour);
                 }
                 break;
             case "Back": // Blue
                 for (int panelIndex = 0; panelIndex < 9; panelIndex++)
                 {
-                    Color currentPanelColour = cubePanels[FaceIndexTrans["Back"], panelIndex].color;
+                    Color currentPanelColour = cubePanels[FaceIndexTrans["Back"], panelIndex];
                     currentState[panelIndex] = GetColour(currentPanelColour);
                 }
                 break;
             case "Down": // White
                 for (int panelIndex = 0; panelIndex < 9; panelIndex++)
                 {
-                    Color currentPanelColour = cubePanels[FaceIndexTrans["Down"], panelIndex].color;
+                    Color currentPanelColour = cubePanels[FaceIndexTrans["Down"], panelIndex];
                     currentState[panelIndex] = GetColour(currentPanelColour);
                 }
                 break;
@@ -302,7 +297,7 @@ public class CubeStates : MonoBehaviour
         {
             for (int panelIndex = 0; panelIndex < 9; panelIndex++)
             {
-                Color currentPanelColor = cubePanels[faceIndex, panelIndex].color;
+                Color currentPanelColor = cubePanels[faceIndex, panelIndex];
                 Color solvedPanelColor = solvedColourState[faceIndex, panelIndex];
 
                 if (!ColourApproximatelyEqual(currentPanelColor, solvedPanelColor))

@@ -221,7 +221,7 @@ public class BeginnersSolve : BaseSolver
                 if (layerName != "Up" && layerName != "Down")
                 {
                     Color centre = cubeStatesScript.ColourTrans[cubeStatesScript.LayerColour[layerName]];
-                    Color currentPanelColour = cubeStatesScript.cubePanels[layerIndex, 7].color;
+                    Color currentPanelColour = cubeStatesScript.cubePanels[layerIndex, 7];
                     if (cubeStatesScript.ColourApproximatelyEqual(centre, currentPanelColour))
                     {
                         matchingCentres.Add(layerIndex);
@@ -592,7 +592,7 @@ public class BeginnersSolve : BaseSolver
 
     IEnumerator MovingSecondLayerPeices(string layerName, int layerIndex)
     {
-        Color panelColour = cubeStatesScript.cubePanels[cubeStatesScript.FaceIndexTrans["Up"], otherEdgeIndex[layerName][3]].color;
+        Color panelColour = cubeStatesScript.cubePanels[cubeStatesScript.FaceIndexTrans["Up"], otherEdgeIndex[layerName][3]];
         char panelColourChar = cubeStatesScript.GetColour(panelColour);
         char[] adjacentFaces = GetAdjacentFaces(cubeStatesScript.LayerColour[layerName]);
         if (panelColourChar == adjacentFaces[0]) //left

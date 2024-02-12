@@ -66,7 +66,7 @@ public class CubeMap : MonoBehaviour
             {
                 // Get the color and position from the CubeStates array
                 //var (panelColor, _) = cubeStatesScript.cubePanels[faceI, panelI];
-                Color panelColor = cubeStatesScript.cubePanels[faceI, panelI].color;
+                Color panelColor = cubeStatesScript.cubePanels[faceI, panelI];
 
                 // Set the color of the corresponding panel on the 2D net
                 GameObject panelObject = panels2DNet[faceI, panelI];

@@ -4,11 +4,13 @@ using UnityEngine.UI;
 public class SolveButtonHandler : MonoBehaviour
 {
     public BeginnersSolve beginnersSolve; // Reference to the BeginnersSolve script
+    public CubeStates cubeStatesScript;
 
     private void Start()
     {
         // Find the BeginnersSolve script in the scene
         beginnersSolve = FindObjectOfType<BeginnersSolve>();
+        cubeStatesScript = FindObjectOfType<CubeStates>();
 
         // Get a reference to the button component
         Button solveButton = GetComponent<Button>();
@@ -22,7 +24,14 @@ public class SolveButtonHandler : MonoBehaviour
         // Call the Solve method of the BeginnersSolve script when the button is clicked
         if (beginnersSolve != null)
         {
-            StartCoroutine(beginnersSolve.Solve());
+            if (!cubeStatesScript.IsCubeSolved())
+            {
+                StartCoroutine(beginnersSolve.Solve());
+            }
+            else
+            {
+                Debug.Log("Scramble cube first");
+            }
         }
         else
         {

@@ -7,31 +7,31 @@ public class RotateCube : MonoBehaviour
 
     void Update()
     {
-        using_worldcam();
+        RotateWorldCamera();
     }
 
-    void using_worldcam()
+    void RotateWorldCamera()
     {
         // Check for arrow key input
         if (Input.GetKey(KeyCode.DownArrow))
         {
-            RotateCamera(Vector3.right);
+            ApplyCameraRotation(Vector3.right);
         }
         else if (Input.GetKey(KeyCode.UpArrow))
         {
-            RotateCamera(Vector3.left);
+            ApplyCameraRotation(Vector3.left);
         }
         else if (Input.GetKey(KeyCode.LeftArrow))
         {
-            RotateCamera(Vector3.down);
+            ApplyCameraRotation(Vector3.down);
         }
         else if (Input.GetKey(KeyCode.RightArrow))
         {
-            RotateCamera(Vector3.up);
+            ApplyCameraRotation(Vector3.up);
         }
     }
 
-    void RotateCamera(Vector3 axis)
+    void ApplyCameraRotation(Vector3 axis)
     {
         transform.Rotate(axis * turnSpeed);
     }
