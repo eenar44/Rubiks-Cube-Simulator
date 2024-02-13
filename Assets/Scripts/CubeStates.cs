@@ -9,15 +9,32 @@ public class CubeStates : MonoBehaviour
      * this script contains and manages the data for the states of each panel on each face of the rubiks cube in a 3d list:
      */
 
-    public MathsFunctions Maths;
+    public MathsFunctions Maths; // reference to Maths functiosn script
 
     public Color[,] cubePanels = new Color[6, 9]; // array of colors
-    public Color[,] solvedColourState = new Color[6, 9];
-    public Camera[] orthoCameras = new Camera[6]; // ReadPanel
+    public Color[,] solvedColourState = new Color[6, 9]; // array that will hold the solved colour state
+    [SerializeField] public Camera[] orthoCameras = new Camera[6]; // list of orthographic cameras in the scene, that are used for raycasts
 
-    // in order of faces in CubeStates: yellow(top), red(left), orange(right), blue(back), white(down)
-    public Dictionary<char, Color> ColourTrans { get; private set; } // has the colour translation, so if "R" -> red RGBA value etc
-    public Dictionary<string, int> FaceIndexTrans = new Dictionary<string, int> // has the index translation so if layerName = Up -> index:1 
+    public Dictionary<char, Color> ColourTrans = new Dictionary<char, Color> // has the colour translation, so if 'R' -> red RGB value: (1, 0, 0)
+    {
+        { 'R', new Color(1.0f, 0.0f,       0.0f)},
+        { 'G', new Color(0.0f, 1.0f,       0.0f)},
+        { 'B', new Color(0.0f, 0.0f,       1.0f)},
+        { '0', new Color(1.0f, 0.4431373f, 0.0f)},
+        { 'Y', new Color(1.0f, 1.0f,       0.0f)},
+        { 'W', new Color(1.0f, 1.0f,       1.0f)},
+    };
+
+    /* all lists that considers all the faces are in the order: top (yellow), front (green), left (red), right (orange), back (blue), down (white) 
+     * panels are indexed as follows:
+     *    0 | 1 | 2
+     *   ---+---+---
+     *    3 | 4 | 5
+     *   ---+---+---
+     *    6 | 7 | 8
+     * every list follows these indexing
+     */
+    public Dictionary<string, int> FaceIndexTrans = new Dictionary<string, int> // has the index translation so if layerName = Up -> index = 1 
     {
         { "Up"    , 0 },
         { "Front" , 1 },
@@ -25,8 +42,8 @@ public class CubeStates : MonoBehaviour
         { "Right" , 3 },
         { "Back"  , 4 },
         { "Down"  , 5 }
-    }; // these indexes are standard for every list that considers all 6 faces.
-    public Dictionary<string, char> LayerColour = new Dictionary<string, char> // has the colour translation e.g. layerName = Up -> 'Y' 
+    }; // these indexes are standardised for every data structure
+    public Dictionary<string, char> LayerColour = new Dictionary<string, char> // stores the relationship between layerName and colour e.g. layerName = Up -> 'Y' 
     {
         { "Up"    , 'Y' },
         { "Front" , 'G' },
@@ -36,7 +53,7 @@ public class CubeStates : MonoBehaviour
         { "Down"  , 'W' }
     }; // all colours are represented as their char value
 
-    public List<List<Vector3>> RayVectors = new List<List<Vector3>>() // ReadPanel
+    public List<List<Vector3>> RayVectors = new List<List<Vector3>>() // 2d list that contains the raycast vectors to read each panel on each face
     {
         new List<Vector3>() // TOP
         {
@@ -114,181 +131,137 @@ public class CubeStates : MonoBehaviour
         }
     };
 
-    public void InitialiseColourDict()
-    {
-        ColourTrans = new Dictionary<char, Color>();
-
-        ColourTrans['R'] = new Color(1.0f, 0.0f,       0.0f); // red
-        ColourTrans['G'] = new Color(0.0f, 1.0f,       0.0f); // green
-        ColourTrans['B'] = new Color(0.0f, 0.0f,       1.0f); // blue
-        ColourTrans['O'] = new Color(1.0f, 0.4431373f, 0.0f); // orange
-        ColourTrans['Y'] = new Color(1.0f, 1.0f,       0.0f); // yellow
-        ColourTrans['W'] = new Color(1.0f, 1.0f,       1.0f); // white
-    }
-
     void Start()
     {
-        Maths = FindObjectOfType<MathsFunctions>();
+        Maths = FindObjectOfType<MathsFunctions>(); // finds the reference to MathsFunctions in the scene
 
-        InitialiseColourDict();
-        ReadPanel();
-
-        // makes a duplicate to compare with (un)solved state
-        for (int faceI = 0; faceI < 6; faceI++)
-        {
-            for (int panelI = 0; panelI < 9; panelI++)
-            {
-                solvedColourState[faceI, panelI] = cubePanels[faceI, panelI];
-            }
-        }
+        ReadPanel(); // executes ReadPanel on start to get the initial solved state of the cube
+        solvedColourState = cubePanels; // assigns the initial solved state to the solvedColourState list 
     }
 
     void Update()
     {
-        ReadPanel();
+        ReadPanel(); // executes ReadPanel so that the cubePanels list updates in every frame.
     }
 
     public void ReadPanel()
     {
-        for (int camIndex = 0; camIndex < orthoCameras.Length; camIndex++)
+        for (int camIndex = 0; camIndex < orthoCameras.Length; camIndex++) // loops through every orthographic camera in the list
         {
-            Camera currentCamera = orthoCameras[camIndex];
-            List<Vector3> currentFaceVectors = RayVectors[camIndex];
+            Camera currentCamera = orthoCameras[camIndex]; // gets the current camera using the index
+            List<Vector3> currentFaceVectors = RayVectors[camIndex]; // gets the list of vectors for the same index
 
-            for (int vectorIndex = 0; vectorIndex < currentFaceVectors.Count; vectorIndex++)
+            for (int vectorIndex = 0; vectorIndex < currentFaceVectors.Count; vectorIndex++) // loops through each vector in the list of vectors for that face
             {
-                Vector3 localPos = currentFaceVectors[vectorIndex];
-                Vector3 camRayPos = currentCamera.transform.TransformPoint(localPos);
-                Vector3 rayDirection = camRayPos - currentCamera.transform.position;
+                Vector3 localPos = currentFaceVectors[vectorIndex]; // gets the local raycast vector for the panel relative to the camera
+                Vector3 camRayPos = currentCamera.transform.TransformPoint(localPos); // translates the local position of the raycast into a world vector so it can be plotted correctly
+                Vector3 rayDirection = camRayPos - currentCamera.transform.position; // calculates the direction of the ray in world space
 
-                if (Physics.Raycast(currentCamera.transform.position, rayDirection, out var hit))
+                if (Physics.Raycast(currentCamera.transform.position, rayDirection, out var hit)) // checks if the raycast hits an object in the scene
                 {
-                    if (hit.transform.CompareTag("RubiksCubePanel"))
+                    if (hit.transform.CompareTag("RubiksCubePanel")) // checks if it is the correct objectby comparing the tag. each panel has the tag: "RubiksCubePanel"
                     {
-                        Color panelColour = hit.transform.GetComponent<Renderer>().material.color;
-                        int faceIndex = camIndex;
-                        cubePanels[faceIndex, vectorIndex] = panelColour;
+                        Color panelColour = hit.transform.GetComponent<Renderer>().material.color; // gets the colour of the panel 
+                        int faceIndex = camIndex; // assigns the camera index to a faceIndex holder for carity
+                        cubePanels[faceIndex, vectorIndex] = panelColour; // adds the colour of the panel to the corresponding face index and panel index
                     }
                 }
-                Debug.DrawRay(currentCamera.transform.position, rayDirection, Color.red);
+                Debug.DrawRay(currentCamera.transform.position, rayDirection, Color.red); // **********
             }
         }
     }
 
     public char GetColour(Color targetColor)
     {
-        /*loops through the ColourTranslation dict and returns the char value for the inputted RGB value*/
-        foreach (var kvp in ColourTrans)
+        /* loops through the ColourTrans dictionary and returns the char value for the inputted RGB value */
+        foreach (var kvp in ColourTrans) // loops through each value in the ColourTans dictionary
         {
-            if (ColourApproximatelyEqual(kvp.Value, targetColor))
+            if (ColourApproximatelyEqual(kvp.Value, targetColor)) // lighting may effect the actual colour so check if its approximately equal to the target colour
             {
-                return kvp.Key;
+                return kvp.Key; // if it is approximately equal then return the corresponding character
             }
         }
-        return 'X';
+        return 'X'; // returns 'X', a null value if colour is not found
     }
 
     public char[] FaceColourState(string layerName)
     {
-        /*returns a char array of the letter colours on a specific face*/
-        char[] currentState = "xxxxxxxxx".ToCharArray();
-        switch (layerName)
+        /* returns a char array of the letter colours on a specific face */
+        char[] currentState = "xxxxxxxxx".ToCharArray(); // base array for the current face state. 
+        switch (layerName) // switch case that will index and overwrite the base string based on the colour of each panel based on standard indexing as mentioned above
         {
             case "Up": // Yellow
-                for (int panelIndex = 0; panelIndex <= 8; panelIndex++)
+                for (int panelIndex = 0; panelIndex < currentState.Length; panelIndex++) // loops between 0 and and the length of the currentState
                 {
-                    Color currentPanelColour = cubePanels[FaceIndexTrans["Up"], panelIndex];
-                    currentState[panelIndex] = GetColour(currentPanelColour);
-                }
+                    Color currentPanelColour = cubePanels[FaceIndexTrans["Up"], panelIndex]; // gets the colour of the "Up" face at that panel index
+                    currentState[panelIndex] = GetColour(currentPanelColour); // gets the character of the corresponding colour on that panel.
+                } //  repeats for every face
                 break;
             case "Front": // Green
-                for (int panelIndex = 0; panelIndex < 9; panelIndex++)
+                for (int panelIndex = 0; panelIndex < currentState.Length; panelIndex++)
                 {
                     Color currentPanelColour = cubePanels[FaceIndexTrans["Front"], panelIndex];
                     currentState[panelIndex] = GetColour(currentPanelColour);
                 }
                 break;
             case "Left": // Red
-                for (int panelIndex = 0; panelIndex < 9; panelIndex++)
+                for (int panelIndex = 0; panelIndex < currentState.Length; panelIndex++)
                 {
                     Color currentPanelColour = cubePanels[FaceIndexTrans["Left"], panelIndex];
                     currentState[panelIndex] = GetColour(currentPanelColour);
                 }
                 break;
             case "Right": // Orange
-                for (int panelIndex = 0; panelIndex < 9; panelIndex++)
+                for (int panelIndex = 0; panelIndex < currentState.Length; panelIndex++)
                 {
                     Color currentPanelColour = cubePanels[FaceIndexTrans["Right"], panelIndex];
                     currentState[panelIndex] = GetColour(currentPanelColour);
                 }
                 break;
             case "Back": // Blue
-                for (int panelIndex = 0; panelIndex < 9; panelIndex++)
+                for (int panelIndex = 0; panelIndex < currentState.Length; panelIndex++)
                 {
                     Color currentPanelColour = cubePanels[FaceIndexTrans["Back"], panelIndex];
                     currentState[panelIndex] = GetColour(currentPanelColour);
                 }
                 break;
             case "Down": // White
-                for (int panelIndex = 0; panelIndex < 9; panelIndex++)
+                for (int panelIndex = 0; panelIndex < currentState.Length; panelIndex++)
                 {
                     Color currentPanelColour = cubePanels[FaceIndexTrans["Down"], panelIndex];
                     currentState[panelIndex] = GetColour(currentPanelColour);
                 }
                 break;
             default:
-                Debug.LogError("Face not found");
+                Debug.LogError("Face not found"); // debug error if the layerName is null
                 break;
         }
-        return currentState;
-    }
-
-    public List<bool> IsColourOnFaces(char colourChar)
-    {
-        /*returns a list of bools, an index for each face, and a true/ false if the specified colour is on the face
-         loop though each panel on each face, for each face check if the colour (eg) 'W' is there, dont check centres [4] and add it onto a list*/
-        List<bool> colourList = new List<bool>();
-
-        foreach (var facePair in FaceIndexTrans)
-        {
-            string layerName = facePair.Key;
-            char[] currentFaceState = FaceColourState(layerName);
-
-            bool inFace = currentFaceState.Any(c => c == colourChar) && Array.IndexOf(currentFaceState, colourChar) != 4;
-            colourList.Add(inFace);
-        }
-        return colourList;
+        return currentState; // return the char array of the current face state
     }
 
     public bool ColourApproximatelyEqual(Color color1, Color color2)
     {
         /*comapres the RGB value to make sure that it is approximately equal
          (mostly here for the orange, which is a pretty odd RGBA value)*/
-        float threshold = 0.01f;
+        float threshold = 0.01f; // colour threshold, if the colour approximation is less than the threshold then it is not the correct colour
 
-        return Maths.AbsoluteValue(color1.r, color2.r) < threshold &&
-               Maths.AbsoluteValue(color1.g, color2.g) < threshold &&
-               Maths.AbsoluteValue(color1.b, color2.b) < threshold;
+        // returns the boolean true or false if the colour is approximately equal
+        return Maths.AbsoluteValue(color1.r, color2.r) < threshold && // compares the absolute value of both red colours to the threshold
+               Maths.AbsoluteValue(color1.g, color2.g) < threshold && // compares the absolute value of both green colours to the threshold
+               Maths.AbsoluteValue(color1.b, color2.b) < threshold;   // compares the absolute value of both blue colours to the threshold
     }
 
     public bool IsCubeSolved()
     {
-        /*checks if the cube is solved by using the duplicate colour list initialised in the Start() function and comparing it to CubeStates*/
-        for (int faceIndex = 0; faceIndex < 6; faceIndex++)
-        {
-            for (int panelIndex = 0; panelIndex < 9; panelIndex++)
-            {
-                Color currentPanelColor = cubePanels[faceIndex, panelIndex];
-                Color solvedPanelColor = solvedColourState[faceIndex, panelIndex];
+        /* checks if the cube is solved by using the duplicate colour list initialised in the Start() function and 
+         * comparing it to CubeStates
+         */
 
-                if (!ColourApproximatelyEqual(currentPanelColor, solvedPanelColor))
-                {
-                    //Debug.Log("False, not solved");
-                    return false; // Cube is not solved
-                }
-            }
+        if (cubePanels == solvedColourState) // check if the current colour list is the same as the solved colour state list
+        {
+            Debug.Log("SOLVEEEEEEEEEEEEEEEDDDDDDDDDDD");
+            return true; // returns true if its the same
         }
-        Debug.Log("true, solveDD");
-        return true; // Cube is solved
+        return false; //  if not return false
     }
 }
