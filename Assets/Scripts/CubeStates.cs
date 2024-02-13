@@ -16,8 +16,6 @@ public class CubeStates : MonoBehaviour
     public Camera[] orthoCameras = new Camera[6]; // ReadPanel
 
     // in order of faces in CubeStates: yellow(top), red(left), orange(right), blue(back), white(down)
-    public char[] caseBase = "xxxxYxxxxxxxxRxxxxxxxxGxxxxxxxxOxxxxxxxxBxxxxxxxxWxxxx".ToCharArray(); // string that can be manipulaed to present the case
-    public char[] solvedState = "YYYYYYYYYRRRRRRRRRGGGGGGGGGOOOOOOOOOBBBBBBBBBWWWWWWWWW".ToCharArray(); 
     public Dictionary<char, Color> ColourTrans { get; private set; } // has the colour translation, so if "R" -> red RGBA value etc
     public Dictionary<string, int> FaceIndexTrans = new Dictionary<string, int> // has the index translation so if layerName = Up -> index:1 
     {
@@ -188,23 +186,6 @@ public class CubeStates : MonoBehaviour
             }
         }
         return 'X';
-    }
-
-    public char[] CubeColourState() 
-    {
-        /*returns a char array of the letter colours for the entire cube*/
-        char[] currentState = caseBase;
-        int panelCounter = 0;
-        for (int faceIndex = 0; faceIndex < 6; faceIndex++)
-        {
-            for (int panelIndex = 0; panelIndex < 9; panelIndex++)
-            {
-                Color currentPanelColour = cubePanels[faceIndex, panelIndex];
-                currentState[panelCounter] = GetColour(currentPanelColour);
-                panelCounter++;
-            }
-        }
-        return currentState;
     }
 
     public char[] FaceColourState(string layerName)
