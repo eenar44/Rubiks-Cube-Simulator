@@ -3,30 +3,27 @@ using UnityEngine.UI;
 
 public class SolveButtonHandler : MonoBehaviour
 {
-    public BeginnersSolve beginnersSolve; // Reference to the BeginnersSolve script
-    public CubeStates cubeStatesScript;
+    public BeginnersSolve beginnersSolve; // reference to the BeginnersSolve script
+    public CubeStates cubeStatesScript; // reference to the CubeStats script
 
     private void Start()
     {
-        // Find the BeginnersSolve script in the scene
-        beginnersSolve = FindObjectOfType<BeginnersSolve>();
-        cubeStatesScript = FindObjectOfType<CubeStates>();
+        beginnersSolve = FindObjectOfType<BeginnersSolve>(); // find the BeginnersSolve script in the scene
+        cubeStatesScript = FindObjectOfType<CubeStates>(); // find the CubeStates script in the scene
 
-        // Get a reference to the button component
-        Button solveButton = GetComponent<Button>();
+        Button solveButton = GetComponent<Button>(); // gets a reference to the button component
 
-        // Add a listener to the button's click event
-        solveButton.onClick.AddListener(OnSolveButtonClick);
+        solveButton.onClick.AddListener(OnSolveButtonClick); // adds a listener to the button's click event
     }
 
     private void OnSolveButtonClick()
     {
-        // Call the Solve method of the BeginnersSolve script when the button is clicked
-        if (beginnersSolve != null)
+        /* calls the solve method of the BeginnersSolve script when the button is clicked */
+        if (beginnersSolve != null) // checks if the script is being properly referecned
         {
-            if (!cubeStatesScript.IsCubeSolved())
+            if (!cubeStatesScript.IsCubeSolved()) // checks if the cube is solved first
             {
-                StartCoroutine(beginnersSolve.Solve());
+                StartCoroutine(beginnersSolve.Solve()); // if its not solved, then execute Solve method in BeginnersSolve
             }
             else
             {
@@ -35,7 +32,7 @@ public class SolveButtonHandler : MonoBehaviour
         }
         else
         {
-            Debug.LogError("BeginnersSolve script not found!");
+            Debug.LogError("BeginnersSolve script not found!"); // warning if script not found
         }
     }
 }

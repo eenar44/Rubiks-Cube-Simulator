@@ -5,9 +5,6 @@ using UnityEngine;
 
 public class BeginnersSolve : BaseSolver
 {
-    public List<bool> solved = new List<bool>(new bool[4]);
-
-
     public override IEnumerator Solve()
     {
         yield return StartCoroutine(Beginners());

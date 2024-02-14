@@ -6362,6 +6362,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   beginnersSolve: {fileID: 0}
+  cubeStatesScript: {fileID: 0}
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0
@@ -8072,7 +8073,6 @@ GameObject:
   - component: {fileID: 848546239}
   - component: {fileID: 848546242}
   - component: {fileID: 848546241}
-  - component: {fileID: 848546243}
   - component: {fileID: 848546244}
   m_Layer: 6
   m_Name: Cube
@@ -8142,8 +8142,6 @@ MonoBehaviour:
   - {fileID: 1466058412}
   - {fileID: 567078120}
   - {fileID: 712969392}
-  caseBase: 000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-  solvedState: 000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 --- !u!114 &848546242
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8157,24 +8155,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Maths: {fileID: 0}
---- !u!114 &848546243
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 848546238}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 939445c789a161247822f596ced7347e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  cubeStatesScript: {fileID: 0}
-  rotateLayersScript: {fileID: 0}
-  Maths: {fileID: 0}
-  dataMangerScript: {fileID: 0}
-  moveCounter: 0
-  matchingCentres: 
 --- !u!114 &848546244
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9342,8 +9322,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8430d80966eb41646aebc08f53005336, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  reset_rot: {fileID: 0}
-  Main_Cam: {fileID: 31225470}
+  reset_rot: {fileID: 978430649}
+  Main_Cam_Holder: {fileID: 31225470}
 --- !u!1 &997599157
 GameObject:
   m_ObjectHideFlags: 0
@@ -10876,13 +10856,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rotateLayersScript: {fileID: 0}
-  moves:
-  - Up
-  - Down
-  - Left
-  - Right
-  - Back
-  - Front
+  scramble_botton: {fileID: 1095646458}
 --- !u!1 &1099478561
 GameObject:
   m_ObjectHideFlags: 0
