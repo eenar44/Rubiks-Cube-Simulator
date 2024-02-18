@@ -19,17 +19,18 @@ public class CubeMap : MonoBehaviour
         {
             faces[i] = transform.Find(faceTags[i]); // finds the object and adds the parent object for the face onto the list
         }
+
+        InitialiseNet(); // initialises the 2D net
     }
 
     void Update()
     {
-        // updates the 2D map in every frame
-        InitialiseNet(); 
-        UpdateColors();
+        UpdateColors(); // updates the 2D map in every frame
     }
 
     void InitialiseNet()
     {
+        /* function that gets all the panel game objects in the scene */
         panels2DNet = new GameObject[6, 9]; // initialises the size of the 2D net
 
         for (int faceI = 0; faceI < 6; faceI++) // loops through each face
@@ -51,7 +52,8 @@ public class CubeMap : MonoBehaviour
     }
 
     void UpdateColors()
-    {   
+    {
+        /* applies the colour to the panels in the scene */
         for (int faceI = 0; faceI < 6; faceI++) // loop through the 6 faces
         {
             for (int panelI = 0; panelI < 9; panelI++) // loop through the 9 panels on each face

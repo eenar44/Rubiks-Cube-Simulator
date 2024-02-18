@@ -172,7 +172,6 @@ public class CubeStates : MonoBehaviour
                         cubePanels[faceIndex, vectorIndex] = panelColour; // adds the colour of the panel to the corresponding face index and panel index
                     }
                 }
-                Debug.DrawRay(currentCamera.transform.position, rayDirection, Color.red); // **********
             }
         }
     }

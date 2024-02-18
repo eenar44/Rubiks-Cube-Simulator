@@ -8,7 +8,12 @@ public class BackButton : MonoBehaviour
     public void LoadPreviousScene()
     {
         /* method to load the previous scene */
-        if (!string.IsNullOrEmpty(previousSceneName)) // checks if the previous scene name is not null or empty
+        // if the current scene is the main simulator, always lead back to the main menu
+        if (SceneManager.GetActiveScene().name == "RubiksMainScene")
+        {
+            SceneManager.LoadScene("MainMenuScene"); // loads main menu
+        }
+        else if (!string.IsNullOrEmpty(previousSceneName)) // checks if the previous scene name is not null or empty
         {
             SceneManager.LoadScene(previousSceneName); // if not then load previous scene
         }

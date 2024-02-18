@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class ResetRotationButton : MonoBehaviour/*, IPointerClickHandler*/
+public class ResetRotationButton : MonoBehaviour, IPointerClickHandler
 {
     private static float turnSpeed = 1.0f; // static turn speed for the rotation to move at
     [SerializeField] public Button reset_rot; // reference to the button in the scene

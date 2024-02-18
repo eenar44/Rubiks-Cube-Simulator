@@ -23,7 +23,7 @@ public class ScrambleButton : MonoBehaviour, IPointerClickHandler
     }
 
     private IEnumerator ScrambleCube()
-    { 
+    {
         /* method that takes the scramblled list, assigns a random direction to them and executes the move */
         string[] scrambleMoves = GenerateRandomMoves(); // generates a random sequence of 20 moves
         bool clockwise; // initialises the clockwise bool
