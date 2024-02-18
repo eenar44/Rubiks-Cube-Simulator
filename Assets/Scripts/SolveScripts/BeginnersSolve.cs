@@ -13,7 +13,11 @@ public class BeginnersSolve : BaseSolver
     IEnumerator Beginners()
     {
         Debug.Log("Beginner's Method");
+        Debug.Log("Start wait:");
+        yield return new WaitForSeconds(60);
+        Debug.Log("End Wait:");
 
+        Debug.Log("Starting:");
         yield return StartCoroutine(SolveCross());
         yield return StartCoroutine(SolveFirstLayerCorners());
         //yield return StartCoroutine(SolveSecondLayer());

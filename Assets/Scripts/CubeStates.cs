@@ -1,6 +1,4 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 public class CubeStates : MonoBehaviour
@@ -12,7 +10,7 @@ public class CubeStates : MonoBehaviour
     public MathsFunctions Maths; // reference to Maths functiosn script
 
     public Color[,] cubePanels = new Color[6, 9]; // array of colors
-    public Color[,] solvedColourState = new Color[6, 9]; // array that will hold the solved colour state
+    public static Color[,] solvedColourState = new Color[6, 9]; // array that will hold the solved colour state
     [SerializeField] public Camera[] orthoCameras = new Camera[6]; // list of orthographic cameras in the scene, that are used for raycasts
 
     public Dictionary<char, Color> ColourTrans = new Dictionary<char, Color> // has the colour translation, so if 'R' -> red RGB value: (1, 0, 0)
@@ -136,7 +134,15 @@ public class CubeStates : MonoBehaviour
         Maths = FindObjectOfType<MathsFunctions>(); // finds the reference to MathsFunctions in the scene
 
         ReadPanel(); // executes ReadPanel on start to get the initial solved state of the cube
-        solvedColourState = cubePanels; // assigns the initial solved state to the solvedColourState list 
+
+        // correctly assigns the solved state to the solvedColourState list
+        for (int faceI = 0; faceI < 6; faceI++) // loops through each face
+        {
+            for (int panelI = 0; panelI < 9; panelI++) // loops through each panel
+            {
+                solvedColourState[faceI, panelI] = cubePanels[faceI, panelI]; // assigns each index for the list to the correct colour
+            }
+        }
     }
 
     void Update()
@@ -256,12 +262,16 @@ public class CubeStates : MonoBehaviour
         /* checks if the cube is solved by using the duplicate colour list initialised in the Start() function and 
          * comparing it to CubeStates
          */
-
-        if (cubePanels == solvedColourState) // check if the current colour list is the same as the solved colour state list
+        for (int faceI = 0; faceI < 6; faceI++) // loops through each face
         {
-            Debug.Log("SOLVEEEEEEEEEEEEEEEDDDDDDDDDDD");
-            return true; // returns true if its the same
+            for (int panelI = 0; panelI < 9; panelI++) // loops through each panel on each face
+            {
+                if (solvedColourState[faceI, panelI] != cubePanels[faceI, panelI]) // checks if each panel is the same as the solved panel
+                {
+                    return false; // returns false if not
+                }
+            }
         }
-        return false; //  if not return false
+        return true; // if all the panels match return true
     }
 }
